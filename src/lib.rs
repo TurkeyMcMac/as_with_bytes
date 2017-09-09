@@ -16,6 +16,7 @@ pub trait TryWithBytes {
 }
 
 impl <T: Copy> AsBytes for T {
+    #[inline]
     fn as_bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
             slice::from_raw_parts(
@@ -27,12 +28,14 @@ impl <T: Copy> AsBytes for T {
 }
 
 impl <T: Copy> WithBytes for T {
+    #[inline]
     unsafe fn with_bytes<'a>(bytes: &'a [u8]) -> &'a T {
         mem::transmute::<_, &'a T>(bytes.as_ptr())
     }
 }
 
 impl <T: Copy> TryWithBytes for T {
+    #[inline]
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a T> {
         if bytes.len() < mem::size_of::<T>() {
             None
@@ -43,6 +46,7 @@ impl <T: Copy> TryWithBytes for T {
 }
 
 impl <T: Copy> AsBytes for [T] {
+    #[inline]
     fn as_bytes<'a>(&'a self) -> &'a [u8] {
         unsafe {
             slice::from_raw_parts(
@@ -54,6 +58,7 @@ impl <T: Copy> AsBytes for [T] {
 }
 
 impl <T: Copy> WithBytes for [T] {    
+    #[inline]
     unsafe fn with_bytes<'a>(bytes: &'a [u8]) -> &'a [T] {
         slice::from_raw_parts(
             mem::transmute::<_, *const T>(bytes.as_ptr()),
@@ -63,6 +68,7 @@ impl <T: Copy> WithBytes for [T] {
 }
 
 impl <T: Copy> TryWithBytes for [T] {
+    #[inline]
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a [T]> {
         Some(<[T]>::with_bytes(bytes))
     }
