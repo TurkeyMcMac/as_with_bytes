@@ -9,7 +9,9 @@ pub trait AsBytes {
 
 pub trait WithBytes {
     unsafe fn with_bytes<'a>(bytes: &'a [u8]) -> &'a Self;
-    
+}
+
+pub trait TryWithBytes {
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a Self>;
 }
 
@@ -28,7 +30,9 @@ impl <T: Copy> WithBytes for T {
     unsafe fn with_bytes<'a>(bytes: &'a [u8]) -> &'a T {
         mem::transmute::<_, &'a T>(bytes.as_ptr())
     }
-    
+}
+
+impl <T: Copy> TryWithBytes for T {
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a T> {
         if bytes.len() < mem::size_of::<T>() {
             None
@@ -56,7 +60,9 @@ impl <T: Copy> WithBytes for [T] {
             bytes.len() / mem::size_of::<T>(),
         )
     }
-    
+}
+
+impl <T: Copy> TryWithBytes for [T] {
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a [T]> {
         Some(<[T]>::with_bytes(bytes))
     }
