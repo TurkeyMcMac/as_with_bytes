@@ -23,3 +23,7 @@ let arr = [10, -11];
 // They reference the same memory address
 assert!(ptr::eq(unsafe { <[i32; 2]>::with_bytes(arr.as_bytes()) }, &arr));
 ```
+
+## How to obtain
+This is available on crates.io [here](https://crates.io/crates/as_with_bytes). More documentation can
+also be found at that location.
