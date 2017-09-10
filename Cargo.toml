@@ -2,5 +2,10 @@
 name = "as_with_bytes"
 version = "0.1.0"
 authors = ["TurkeyMcMac <jwmhjwmh@gmail.com>"]
+description = "A way to encode and decode certain values as bytes without performing any duplication of memory. This has probably been done before, but whatever."
+repository = "https://github.com/TurkeyMcMac/as_with_bytes"
+keywords = ["serialization", "encoding", "decoding"]
+categories = ["no-std"]
+license = "MIT"
 
 [dependencies]
