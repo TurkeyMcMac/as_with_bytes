@@ -27,7 +27,7 @@ use core::slice;
 /// A trait used for converting into bytes.
 pub trait AsBytes {
     /// Returns a byte slice representation of `self`.
-    fn as_bytes<'a>(&'a self) -> &'a [u8];
+    fn as_bytes(&self) -> &[u8];
 }
 
 /// A trait used for converting from bytes.
@@ -65,7 +65,7 @@ pub trait TryWithBytes {
 
 impl <T: Copy> AsBytes for T {
     #[inline]
-    fn as_bytes<'a>(&'a self) -> &'a [u8] {
+    fn as_bytes<'a>(&self) -> &[u8] {
         unsafe {
             slice::from_raw_parts(
                 mem::transmute::<_, *const u8>(self),
@@ -95,7 +95,7 @@ impl <T: Copy> TryWithBytes for T {
 
 impl <T: Copy> AsBytes for [T] {
     #[inline]
-    fn as_bytes<'a>(&'a self) -> &'a [u8] {
+    fn as_bytes<'a>(&self) -> &[u8] {
         unsafe {
             slice::from_raw_parts(
                 mem::transmute::<_, *const u8>(self.as_ptr()),
