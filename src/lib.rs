@@ -33,7 +33,11 @@ pub trait AsBytes {
 /// A trait used for converting from bytes.
 pub trait WithBytes {
     /// Returns a `Self` representation of the given slice of bytes.
-    ///
+    /// 
+    /// # Panics
+    /// This function panics when a slice containing a zero-sized
+    /// type is requested.
+    /// 
     /// # Unsafe
     /// This function is unsafe for two reasons: Firstly, If the
     /// length of `bytes` is shorter than `size_of::<Self>`,
@@ -58,8 +62,10 @@ pub trait TryWithBytes {
     /// you decode into that same type.
     /// 
     /// #### Note
-    /// When used to decode dynamically sized slices, `Some` will always be
-    /// returned, since the slice will be empty if there is not enough data.
+    /// When used to decode dynamically sized slices, `Some` will almost always
+    /// be returned, since the slice will be empty if there is not enough data.
+    /// The only situation where `None` is ever returned is when you ask for a
+    /// slice containing a type with a size of zero, and who would want that?
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a Self>;
 }
 
@@ -118,7 +124,11 @@ impl <T: Copy> WithBytes for [T] {
 impl <T: Copy> TryWithBytes for [T] {
     #[inline]
     unsafe fn try_with_bytes<'a>(bytes: &'a [u8]) -> Option<&'a [T]> {
-        Some(<[T]>::with_bytes(bytes))
+        if mem::size_of::<T>() > 0 {
+            Some(<[T]>::with_bytes(bytes))
+        } else {
+            None
+        }
     }
 }
 
@@ -150,5 +160,12 @@ mod tests {
         let arr = [0u8; 7];
         
         assert_eq!(unsafe { <[u16]>::with_bytes(&arr) }, &[0; 3]);
+    }
+    
+    #[test]
+    fn zero_size_type_slices_work() {
+        let byte: u8 = 0;
+        
+        assert_eq!(unsafe { <[()]>::try_with_bytes(byte.as_bytes()) }, None);
     }
 }
