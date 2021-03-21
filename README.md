@@ -1,3 +1,5 @@
+**Don't use this! When I made it, I didn't know about memory alignment.**
+
 # as_with_bytes
 Simple serialization for simple values.
 
